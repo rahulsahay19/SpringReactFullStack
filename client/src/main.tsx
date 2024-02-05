@@ -10,7 +10,9 @@ import { router } from './app/router/Routes.tsx';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
+  //This will enforce components to render twice in development mode
+  //but in production, it won't happen.
   <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+   </React.StrictMode>,
 )
