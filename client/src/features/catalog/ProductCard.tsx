@@ -34,7 +34,6 @@ export default function ProductCard({product}: Props) {
 
   async function addItem() {
     try {
-      console.log('Setting loading to true...');
       setLoading(true);
       await new Promise<void>((resolve) => {
         setTimeout(() => {
@@ -50,13 +49,9 @@ export default function ProductCard({product}: Props) {
         }, 1000); // Introduce a delay of 1 second (1000 milliseconds)
       });
     } finally {
-      console.log('Setting loading to false...');
       setLoading(false);
     }
-  }
-  
-
-  console.log('Rendering ProductCard with loading state:', loading);
+  }  
 
   return (
     <Card>
@@ -90,10 +85,7 @@ export default function ProductCard({product}: Props) {
           startIcon={loading ? <CircularProgress size={20} color="inherit" /> : null}
         >
           Add to cart
-        </LoadingButton>
-        {/* <Button size="small" onClick={addItem} disabled={loading}>
-          {loading ? 'Adding...' : 'Add to cart'}
-        </Button> */}
+        </LoadingButton>        
         <Button component={Link} to={`/store/${product.id}`} size="small">View</Button>
       </CardActions>
     </Card>
