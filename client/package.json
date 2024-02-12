@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.4",
+    "@mui/lab": "^5.0.0-alpha.165",
     "@mui/material": "^5.15.4",
     "@paralleldrive/cuid2": "^2.2.2",
     "axios": "^1.6.7",
