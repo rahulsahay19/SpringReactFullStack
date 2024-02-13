@@ -6,12 +6,25 @@ import { createId } from "@paralleldrive/cuid2";
 class BasketService {
   apiUrl = "http://localhost:8080/api/baskets";
 
-  async getBasket() {
+  async getBasketFromApi() {
     try {
       const response = await axios.get<Basket>(`${this.apiUrl}`);
       return response.data;
     } catch (error) {
       throw new Error("Failed to retrieve basket");
+    }
+  }
+
+  async getBasket() {
+    try {
+      const basketString = localStorage.getItem('basket');
+      if (basketString) {
+        return JSON.parse(basketString) as Basket;
+      } else {
+        throw new Error("Basket not found in local storage");
+      }
+    } catch (error) {
+      throw new Error("Failed to retrieve basket: " + error);
     }
   }
 
@@ -36,15 +49,57 @@ class BasketService {
     }
   }
 
-  async removeItemFromBasket(basketId: string) {
-    try {
-      await axios.delete(`${this.apiUrl}/${basketId}`);
-    } catch (error) {
-      throw new Error("Failed to remove item from basket");
+  // async removeItemFromBasket(basketId: string) {
+  //   try {
+  //     await axios.delete(`${this.apiUrl}/${basketId}`);
+  //   } catch (error) {
+  //     throw new Error("Failed to remove item from basket");
+  //   }
+  // }
+
+  async remove(itemId: number){
+    const basket = this.getCurrentBasket();
+    if(basket){
+      const itemIndex = basket.items.findIndex((p)=>p.id === itemId);
+      if(itemIndex !==-1){
+        basket.items.splice(itemIndex, 1);
+        this.setBasket(basket);
+      }
+      //check if the basket is empty after removing the item
+      if(basket.items.length === 0){
+        //clear the basket from local storage
+        localStorage.removeItem('basket_id');
+        localStorage.removeItem('basket');        
+      }
+  }
+}
+
+async incrementItemQuantity(itemId: number, quantity: number = 1){
+  const basket = this.getCurrentBasket();
+  if(basket){
+    const item = basket.items.find((p)=>p.id === itemId);
+    if(item){
+      item.quantity += quantity;
+      if(item.quantity<1){
+        item.quantity = 1; //Preventing -ve quantity
+      }
+      this.setBasket(basket);
     }
   }
+}
 
-  private async setBasket(basket: Basket) {
+async decrementItemQuantity(itemId: number, quantity: number = 1){
+  const basket = this.getCurrentBasket();
+  if(basket){
+    const item = basket.items.find((p)=>p.id === itemId);
+    if(item && item.quantity > 1){
+      item.quantity -= quantity;
+      this.setBasket(basket);
+    }
+  }
+}
+
+  async setBasket(basket: Basket) {
     try {
       await axios.post<Basket>(this.apiUrl, basket);
       localStorage.setItem('basket', JSON.stringify(basket));

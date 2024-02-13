@@ -11,6 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
+import { useStoreContext } from "../context/StoreContext";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { title: "Home", path: "/" },
@@ -34,11 +36,24 @@ const navStyles = {
     color: "text.secondary",
   },
 };
+
 interface Props {
   darkMode: boolean;
   handleThemeChange: () => void;
 }
+
 export default function Header({ darkMode, handleThemeChange }: Props) {
+  const { basket } = useStoreContext();
+  const [itemCount, setItemCount] = useState(0);
+
+  useEffect(() => {
+    // Update item count whenever basket changes
+    if (basket && basket.items) {
+      const count = basket.items.reduce((sum, item) => sum + item.quantity, 0);
+      setItemCount(count);
+    }
+  }, [basket]);
+
   return (
     <AppBar position="static" sx={{ mb: 4 }}>
       <Toolbar
@@ -48,8 +63,13 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
           alignItems: "center",
         }}
       >
-        <Box display='flex' alignItems='center'>
-          <Typography variant="h6" component={NavLink} to="/" sx={navStyles}>
+        <Box display="flex" alignItems="center">
+          <Typography
+            variant="h6"
+            component={NavLink}
+            to="/"
+            sx={navStyles}
+          >
             Sports Center
           </Typography>
           <Switch checked={darkMode} onChange={handleThemeChange} />
@@ -57,20 +77,37 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
 
         <List sx={{ display: "flex" }}>
           {navLinks.map(({ title, path }) => (
-            <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
+            <ListItem
+              component={NavLink}
+              to={path}
+              key={path}
+              sx={navStyles}
+            >
               {title}
             </ListItem>
           ))}
         </List>
-        <Box display='flex' alignItems='center'>
-          <IconButton component={Link} to='/basket' size="large" edge="start" color="inherit" sx={{ mr: 2 }}>
-            <Badge badgeContent="4" color="secondary">
+        <Box display="flex" alignItems="center">
+          <IconButton
+            component={Link}
+            to="/basket"
+            size="large"
+            edge="start"
+            color="inherit"
+            sx={{ mr: 2 }}
+          >
+            <Badge badgeContent={itemCount} color="secondary">
               <ShoppingCart />
             </Badge>
           </IconButton>
           <List sx={{ display: "flex" }}>
             {accountLinks.map(({ title, path }) => (
-              <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
+              <ListItem
+                component={NavLink}
+                to={path}
+                key={path}
+                sx={navStyles}
+              >
                 {title}
               </ListItem>
             ))}
