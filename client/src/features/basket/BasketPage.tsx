@@ -1,13 +1,27 @@
-import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, IconButton } from "@mui/material";
+import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, IconButton, Grid, Button, Paper, Box } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Product } from "../../app/models/product";
 import { useStoreContext } from "../../app/context/StoreContext";
+import { Add, Remove } from "@mui/icons-material";
+import agent from "../../app/api/agent";
+import BasketSummary from "./BasketSummary";
+import { Link } from "react-router-dom";
 
 export default function BasketPage(){
-    const {basket} = useStoreContext();
+    const { basket } = useStoreContext();
+
+    const { Basket: BasketActions } = agent;
+
+    const removeItem = (productId: number) =>{
+        BasketActions.removeItem(productId);
+    }
     
-    const handleRemoveItem = (productId: number) => {
-        // Implement the logic to remove the item from the basket
+    const decrementItem = (productId: number, quantity: number = 1) => {
+        BasketActions.decrementItemQuantity(productId, quantity);
+    };
+
+    const incrementItem = (productId: number, quantity: number = 1) => {
+        BasketActions.incrementItemQuantity(productId, quantity);
     };
 
     // Define the extractImageName function
@@ -33,7 +47,8 @@ export default function BasketPage(){
     if (!basket || basket.items.length === 0) return <Typography variant="h3">Your basket is empty. Please add few items!!!</Typography>;
 
     return (
-        <TableContainer>
+        <>
+            <TableContainer component={Paper}>
             <Table>
                 <TableHead>
                     <TableRow>
@@ -55,10 +70,18 @@ export default function BasketPage(){
                             </TableCell>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{formatPrice(item.price)}</TableCell>
-                            <TableCell>{item.quantity}</TableCell>
+                            <TableCell>
+                                <IconButton color='error' onClick={() => decrementItem(item.id)}>
+                                    <Remove />
+                                </IconButton>
+                                {item.quantity}
+                                <IconButton color='error' onClick={() => incrementItem(item.id)}>
+                                    <Add />
+                                </IconButton>
+                            </TableCell>
                             <TableCell>{formatPrice(item.price * item.quantity)}</TableCell>
                             <TableCell>
-                                <IconButton onClick={() => handleRemoveItem(item.id)} aria-label="delete">
+                                <IconButton onClick={() => removeItem(item.id)} aria-label="delete">
                                     <DeleteIcon />
                                 </IconButton>
                             </TableCell>
@@ -67,5 +90,19 @@ export default function BasketPage(){
                 </TableBody>
             </Table>
         </TableContainer>
+        <Box mt={2} p={2} bgcolor="background.paper" borderRadius={4}>
+            <BasketSummary/>
+            <Button
+                component={Link}
+                to='/checkout'
+                variant='contained'
+                size='large'
+                fullWidth
+            >
+                Checkout
+            </Button>
+        </Box>
+        </>
+        
     );
 }

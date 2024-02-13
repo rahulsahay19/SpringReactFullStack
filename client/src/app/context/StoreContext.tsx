@@ -22,22 +22,6 @@ export function useStoreContext() {
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [basket, setBasket] = useState<Basket | null>(null);
 
-  useEffect(() => {
-    const loadBasket = async () => {
-      const basketFromLocalStorage = getBasketFromLocalStorage();
-      if (basketFromLocalStorage) {
-        try {
-          await agent.Basket.setBasket(basketFromLocalStorage);
-          setBasket(basketFromLocalStorage);
-        } catch (error) {
-          console.error('Failed to set basket:', error);
-        }
-      }
-    };
-
-    loadBasket();
-  }, []);
-
   const removeItem = (productId: number, quantity: number) => {
     // Implement logic to remove item from basket
   };
@@ -48,5 +32,5 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     removeItem,
   };
 
-  return <StoreContext.Provider value={storeContextValue}>{children}</StoreContext.Provider>;
+  return <StoreContext.Provider value={{basket,setBasket,removeItem}}>{children}</StoreContext.Provider>;
 }

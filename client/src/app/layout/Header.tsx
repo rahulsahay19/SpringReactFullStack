@@ -44,15 +44,16 @@ interface Props {
 
 export default function Header({ darkMode, handleThemeChange }: Props) {
   const { basket } = useStoreContext();
-  const [itemCount, setItemCount] = useState(0);
+  const itemCount = basket?.items.reduce((sum, item)=>sum+item.quantity, 0);
+  //const [itemCount, setItemCount] = useState(0);
 
-  useEffect(() => {
-    // Update item count whenever basket changes
-    if (basket && basket.items) {
-      const count = basket.items.reduce((sum, item) => sum + item.quantity, 0);
-      setItemCount(count);
-    }
-  }, [basket]);
+  // useEffect(() => {
+  //   // Update item count whenever basket changes
+  //   if (basket && basket.items) {
+  //     const count = basket.items.reduce((sum, item) => sum + item.quantity, 0);
+  //     setItemCount(count);
+  //   }
+  // }, [basket]);
 
   return (
     <AppBar position="static" sx={{ mb: 4 }}>
