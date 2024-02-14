@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import agent from "../../app/api/agent";
 import { LoadingButton } from "@mui/lab";
-import { useStoreContext } from "../../app/context/StoreContext";
+import { useAppDispatch } from "../../app/store/configureStore";
+import { setBasket } from "../basket/basketSlice";
 
 interface Props {
     product: Product;
@@ -32,20 +33,19 @@ export default function ProductCard({product}: Props) {
   };
 
   const [loading, setLoading] = useState(false);
-  const { setBasket } = useStoreContext();
+  const dispatch = useAppDispatch();
 
-  async function addItem() {
-    try {
-      setLoading(true);
-      await agent.Basket.addItem(product);
-      const updatedBasket = await agent.Basket.get();
-      setBasket(updatedBasket);
-      } catch (error) {
-      console.error("Failed to add item to basket:", error);
-    } finally {
-      setLoading(false);
-    }
-  }  
+  function addItem() {
+    setLoading(true);
+    agent.Basket.addItem(product)
+      .then(response => {
+        console.log('New Basket:', response.basket);
+        dispatch(setBasket(response.basket));
+      })
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false));
+  }
+    
 
   return (
     <Card>

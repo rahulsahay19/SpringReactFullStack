@@ -1,7 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import agent from '../api/agent';
+import { createContext, useContext, useState } from 'react';
 import { Basket } from '../models/basket';
-import { getBasketFromLocalStorage } from '../util/util';
 
 interface StoreContextValue {
   basket: Basket | null;
@@ -22,15 +20,10 @@ export function useStoreContext() {
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [basket, setBasket] = useState<Basket | null>(null);
 
-  const removeItem = (productId: number, quantity: number) => {
+  const removeItem = () => {
     // Implement logic to remove item from basket
   };
 
-  const storeContextValue: StoreContextValue = {
-    basket,
-    setBasket,
-    removeItem,
-  };
 
   return <StoreContext.Provider value={{basket,setBasket,removeItem}}>{children}</StoreContext.Provider>;
 }

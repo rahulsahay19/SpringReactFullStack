@@ -1,15 +1,15 @@
-import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, IconButton, Grid, Button, Paper, Box } from "@mui/material";
+import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell, IconButton, Button, Paper, Box } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Product } from "../../app/models/product";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { Add, Remove } from "@mui/icons-material";
 import agent from "../../app/api/agent";
 import BasketSummary from "./BasketSummary";
 import { Link } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 
 export default function BasketPage(){
-    const { basket } = useStoreContext();
-
+    const { basket } = useAppSelector(state=>state.basket);
+    const dispatch = useAppDispatch();
     const { Basket: BasketActions } = agent;
 
     const removeItem = (productId: number) =>{

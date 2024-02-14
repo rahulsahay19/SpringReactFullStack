@@ -57,7 +57,9 @@ const Basket = {
     },
     addItem: async (product: Product) => {
         try {
-            await BasketService.addItemToBasket(product);
+            const result = await BasketService.addItemToBasket(product);
+            console.log(result);
+            return result;
         } catch (error) {
             console.error("Failed to add item to basket:", error);
             throw error;

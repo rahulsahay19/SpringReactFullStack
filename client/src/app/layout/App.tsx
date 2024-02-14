@@ -7,26 +7,27 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getBasketFromLocalStorage } from "../util/util";
 import agent from "../api/agent";
 import Spinner from "./Spinner";
-import { useStoreContext } from "../context/StoreContext";
+import { useAppDispatch } from "../store/configureStore";
+import { setBasket } from "../../features/basket/basketSlice";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
-  const {setBasket} = useStoreContext();
+  //const {setBasket} = useStoreContext();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     const basket = getBasketFromLocalStorage();
     if(basket){
       agent.Basket.get()
-     // .then(basket=>agent.Basket.setBasket(basket))
-      .then(basket=>setBasket(basket))
+      .then(basket=>dispatch(setBasket(basket)))
       .catch(error=>console.log(error))
       .finally(()=> setLoading(false))
     }else{
       setLoading(false);
     }
-  }, [setBasket])
+  }, [dispatch])
   const theme = createTheme({
     palette:{
       mode: paletteType,

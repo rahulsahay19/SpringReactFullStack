@@ -1,18 +1,11 @@
-import { ShoppingCart } from "@mui/icons-material";
-import {
-  AppBar,
-  Badge,
-  Box,
-  IconButton,
-  List,
-  ListItem,
-  Switch,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+// Header.tsx
+
+import { AppBar, Badge, Box, IconButton, List, ListItem, Switch, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink } from "react-router-dom";
-import { useStoreContext } from "../context/StoreContext";
-import { useEffect, useState } from "react";
+import { ShoppingCart } from "@mui/icons-material";
+import { useAppSelector } from "../store/configureStore";
+import { useAppDispatch } from "../../app/store/configureStore";
+import { useEffect } from "react";
 
 const navLinks = [
   { title: "Home", path: "/" },
@@ -43,17 +36,17 @@ interface Props {
 }
 
 export default function Header({ darkMode, handleThemeChange }: Props) {
-  const { basket } = useStoreContext();
-  const itemCount = basket?.items.reduce((sum, item)=>sum+item.quantity, 0);
-  //const [itemCount, setItemCount] = useState(0);
-
-  // useEffect(() => {
-  //   // Update item count whenever basket changes
-  //   if (basket && basket.items) {
-  //     const count = basket.items.reduce((sum, item) => sum + item.quantity, 0);
-  //     setItemCount(count);
-  //   }
-  // }, [basket]);
+  const { basket } = useAppSelector(state => state.basket);
+  console.log('Basket:', basket);
+  useEffect(() => {
+    console.log('Basket Items:', basket?.items);
+  }, [basket]);
+  
+  const temp = basket;
+  console.log(temp?.items);
+  console.log('Basket Items:', basket?.items);
+  const itemCount = basket?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const dispatch = useAppDispatch();
 
   return (
     <AppBar position="static" sx={{ mb: 4 }}>
@@ -118,3 +111,5 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
     </AppBar>
   );
 }
+
+
