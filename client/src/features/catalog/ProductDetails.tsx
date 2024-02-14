@@ -3,11 +3,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Product } from "../../app/models/product";
 import agent from "../../app/api/agent";
-import { useStoreContext } from "../../app/context/StoreContext";
 import { LoadingButton } from "@mui/lab";
+import { useAppDispatch, useAppSelector } from "../../app/store/configureStore";
 
 export default function ProductDetails(){
-    const { basket } = useStoreContext();
+    const { basket } = useAppSelector(state=>state.basket);
+    const dispatch = useAppDispatch();
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<Product | null>();
     const [loading, setLoading] = useState(true);
@@ -60,14 +61,14 @@ export default function ProductDetails(){
                 const quantityDifference = quantity - item.quantity;
                 if (quantityDifference > 0) {
                     // Increment the quantity of an existing item in the basket
-                    await agent.Basket.incrementItemQuantity(item.id, quantityDifference);
+                    await agent.Basket.incrementItemQuantity(item.id, quantityDifference, dispatch);
                 } else if (quantityDifference < 0) {
                     // Decrement the quantity of an existing item in the basket
-                    await agent.Basket.decrementItemQuantity(item.id, Math.abs(quantityDifference));
+                    await agent.Basket.decrementItemQuantity(item.id, Math.abs(quantityDifference), dispatch);
                 }
             } else {
                 // Add a new item to the basket
-                await agent.Basket.addItem(newItem);
+                await agent.Basket.addItem(newItem, dispatch);
             }
             setSubmitting(false);
         } catch (error) {

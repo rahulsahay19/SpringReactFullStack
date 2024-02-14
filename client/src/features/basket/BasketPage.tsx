@@ -13,15 +13,15 @@ export default function BasketPage(){
     const { Basket: BasketActions } = agent;
 
     const removeItem = (productId: number) =>{
-        BasketActions.removeItem(productId);
+        BasketActions.removeItem(productId, dispatch);
     }
     
     const decrementItem = (productId: number, quantity: number = 1) => {
-        BasketActions.decrementItemQuantity(productId, quantity);
+        BasketActions.decrementItemQuantity(productId, quantity, dispatch);
     };
 
     const incrementItem = (productId: number, quantity: number = 1) => {
-        BasketActions.incrementItemQuantity(productId, quantity);
+        BasketActions.incrementItemQuantity(productId, quantity, dispatch);
     };
 
     // Define the extractImageName function

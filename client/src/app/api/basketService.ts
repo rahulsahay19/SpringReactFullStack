@@ -3,6 +3,9 @@ import { Product } from "../models/product";
 import { Basket, BasketItem, BasketTotals } from "../models/basket";
 import { createId } from "@paralleldrive/cuid2";
 
+import { setBasket } from "../../features/basket/basketSlice";
+import { Dispatch } from "redux";
+
 class BasketService {
   apiUrl = "http://localhost:8080/api/baskets";
 
@@ -28,7 +31,7 @@ class BasketService {
     }
   }
 
-  async addItemToBasket(item: Product, quantity = 1) {
+  async addItemToBasket(item: Product, quantity = 1, dispatch: Dispatch) {
     try {
       let basket = this.getCurrentBasket();
 
@@ -38,7 +41,7 @@ class BasketService {
 
       const itemToAdd = this.mapProductToBasket(item);
       basket.items = this.upsertItems(basket.items, itemToAdd, quantity);
-      this.setBasket(basket);
+      this.setBasket(basket, dispatch);
 
       // Calculate totals after updating the basket
       const totals = this.calculateTotals(basket);
@@ -57,13 +60,13 @@ class BasketService {
   //   }
   // }
 
-  async remove(itemId: number){
+  async remove(itemId: number, dispatch: Dispatch){
     const basket = this.getCurrentBasket();
     if(basket){
       const itemIndex = basket.items.findIndex((p)=>p.id === itemId);
       if(itemIndex !==-1){
         basket.items.splice(itemIndex, 1);
-        this.setBasket(basket);
+        this.setBasket(basket, dispatch);
       }
       //check if the basket is empty after removing the item
       if(basket.items.length === 0){
@@ -74,7 +77,7 @@ class BasketService {
   }
 }
 
-async incrementItemQuantity(itemId: number, quantity: number = 1){
+async incrementItemQuantity(itemId: number, quantity: number = 1, dispatch: Dispatch){
   const basket = this.getCurrentBasket();
   if(basket){
     const item = basket.items.find((p)=>p.id === itemId);
@@ -83,26 +86,27 @@ async incrementItemQuantity(itemId: number, quantity: number = 1){
       if(item.quantity<1){
         item.quantity = 1; //Preventing -ve quantity
       }
-      this.setBasket(basket);
+      this.setBasket(basket, dispatch);
     }
   }
 }
 
-async decrementItemQuantity(itemId: number, quantity: number = 1){
+async decrementItemQuantity(itemId: number, quantity: number = 1, dispatch: Dispatch){
   const basket = this.getCurrentBasket();
   if(basket){
     const item = basket.items.find((p)=>p.id === itemId);
     if(item && item.quantity > 1){
       item.quantity -= quantity;
-      this.setBasket(basket);
+      this.setBasket(basket, dispatch);
     }
   }
 }
 
-  async setBasket(basket: Basket) {
+  async setBasket(basket: Basket,  dispatch: Dispatch) {
     try {
       await axios.post<Basket>(this.apiUrl, basket);
       localStorage.setItem('basket', JSON.stringify(basket));
+      dispatch(setBasket(basket));
     } catch (error) {
       throw new Error("Failed to update basket");
     }
