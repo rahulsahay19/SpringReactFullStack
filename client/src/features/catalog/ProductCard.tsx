@@ -37,7 +37,7 @@ export default function ProductCard({product}: Props) {
 
   function addItem() {
     setLoading(true);
-    agent.Basket.addItem(product)
+    agent.Basket.addItem(product, dispatch)
       .then(response => {
         console.log('New Basket:', response.basket);
         dispatch(setBasket(response.basket));
