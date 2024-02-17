@@ -57,40 +57,41 @@ export default function Catalog() {
   }, [currentPage, pageSize]);
   
 
-  const loadProducts = () => {
+  const loadProducts = (selectedSort, searchKeyword = '') => {
     setLoading(true);
-  
-    // Check if either selectedBrandId or selectedTypeId is not 0
-    if (selectedBrandId !== 0 && selectedTypeId !== 0) {
-      // If both brand and type are selected, make a filtered request by both
-      agent.Store.list(currentPage, pageSize, selectedBrandId, selectedTypeId)
+    let page = currentPage - 1; // Adjusting page numbering to start from 0
+    let size = pageSize;
+    let brandId = selectedBrandId !== 0 ? selectedBrandId : undefined;
+    let typeId = selectedTypeId !== 0 ? selectedTypeId : undefined;
+    const sort = "name"; // Always sort by the name field
+    const order = selectedSort === "desc" ? "desc" : "asc"; // Determine the order based on user selection
+
+    // Construct the base URL with sorting parameters
+    let url = `${agent.Store.apiUrl}?sort=${sort}&order=${order}`;
+
+    // Check if brandId or typeId is selected to add filtering parameters to the URL
+    if (brandId !== undefined || typeId !== undefined) {
+      url += `&`;
+      if (brandId !== undefined) url += `brandId=${brandId}&`;
+      if (typeId !== undefined) url += `typeId=${typeId}&`;
+      // Remove trailing "&" if present
+      url = url.replace(/&$/, "");
+    }
+
+    // Make the API request with the constructed URL
+    if (searchKeyword) {
+      console.log(searchKeyword);
+      // If search keyword is provided, perform search
+      agent.Store.search(searchKeyword)
         .then((productsRes) => {
           setProducts(productsRes.content);
-          setTotalItems(productsRes.totalElements);
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false));
-    } else if (selectedBrandId !== 0 && selectedTypeId === 0) {
-      // If only brand is selected and type is not selected, make a filtered request by brand
-      agent.Store.list(currentPage, pageSize, selectedBrandId)
-        .then((productsRes) => {
-          setProducts(productsRes.content);
-          setTotalItems(productsRes.totalElements);
-        })
-        .catch((error) => console.log(error))
-        .finally(() => setLoading(false));
-    } else if (selectedTypeId !== 0 && selectedBrandId === 0) {
-      // If only type is selected and brand is not selected, make a filtered request by type
-      agent.Store.list(currentPage, pageSize, undefined, selectedTypeId)
-        .then((productsRes) => {
-          setProducts(productsRes.content);
-          setTotalItems(productsRes.totalElements);
+          setTotalItems(productsRes.length);
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     } else {
-      // Otherwise, make a regular list request
-      agent.Store.list(currentPage, pageSize)
+      // If no search keyword, proceed with regular list request
+      agent.Store.list(page, size, undefined, undefined, url)
         .then((productsRes) => {
           setProducts(productsRes.content);
           setTotalItems(productsRes.totalElements);
@@ -98,19 +99,21 @@ export default function Catalog() {
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     }
-  };
-  
-  
+};
+
+
   // Trigger loadProducts whenever selectedBrandId or selectedTypeId changes
   useEffect(() => {
-    loadProducts();
+    loadProducts(selectedSort);
   }, [selectedBrandId, selectedTypeId]);
   
   
-
   const handleSortChange = (event) => {
-    setSelectedSort(event.target.value);
+    const selectedSort = event.target.value;
+    setSelectedSort(selectedSort); // Update selectedSort state with the new sorting option
+    loadProducts(selectedSort); // Reload products with the new sorting option
   };
+  
 
   const handleBrandChange = (event) => {
     const selectedBrand = event.target.value;
@@ -118,7 +121,7 @@ export default function Catalog() {
     setSelectedBrand(selectedBrand);
     setSelectedBrandId(brand.id); // Set selected brand ID
     //setSearchTerm(selectedBrand); // Update searchTerm to trigger search
-    loadProducts(); // Call loadProducts to perform the search
+    loadProducts(selectedSort); // Call loadProducts to perform the search
   };
   
   const handleTypeChange = (event) => {
@@ -127,7 +130,7 @@ export default function Catalog() {
     setSelectedType(selectedType);
     setSelectedTypeId(type.id); // Set selected type ID
     //setSearchTerm(selectedType); // Update searchTerm to trigger search
-    loadProducts(); // Call loadProducts to perform the search
+    loadProducts(selectedSort); // Call loadProducts to perform the search
   };
   
 
@@ -160,7 +163,7 @@ export default function Catalog() {
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               // Trigger search action
-              loadProducts();
+              loadProducts(selectedSort, searchTerm); // Pass the search term to loadProducts
             }
           }}
         />

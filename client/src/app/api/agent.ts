@@ -16,15 +16,16 @@ const requests = {
 };
 
 const Store = {
-  list: (page: number, size: number, brandId?: number, typeId?: number) => {
-    let url = `products?page=${page - 1}&size=${size}`;
+  apiUrl: 'http://localhost:8080/api/products',
+  list: (page: number, size: number, brandId?: number, typeId?: number, url?: string) => {
+    let requestUrl = url ? url : `products?page=${page - 1}&size=${size}`;
     if (brandId !== undefined) {
-      url += `&brandId=${brandId}`;
+      requestUrl += `&brandId=${brandId}`;
     }
     if (typeId !== undefined) {
-      url += `&typeId=${typeId}`;
+      requestUrl += `&typeId=${typeId}`;
     }
-    return requests.get(url);
+    return requests.get(requestUrl);
   },
   details: (id: number) => requests.get(`products/${id}`),
   types: () => requests.get('products/types').then(types => [{ id: 0, name: 'All' }, ...types]),
