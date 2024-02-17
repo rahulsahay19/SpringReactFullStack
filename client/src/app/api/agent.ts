@@ -16,7 +16,16 @@ const requests = {
 };
 
 const Store = {
-  list: (page: number, size: number) => requests.get(`products?page=${page-1}&size=${size}`),
+  list: (page: number, size: number, brandId?: number, typeId?: number) => {
+    let url = `products?page=${page - 1}&size=${size}`;
+    if (brandId !== undefined) {
+      url += `&brandId=${brandId}`;
+    }
+    if (typeId !== undefined) {
+      url += `&typeId=${typeId}`;
+    }
+    return requests.get(url);
+  },
   details: (id: number) => requests.get(`products/${id}`),
   types: () => requests.get('products/types').then(types => [{ id: 0, name: 'All' }, ...types]),
   brands: () => requests.get('products/brands').then(brands => [{ id: 0, name: 'All' }, ...brands]),

@@ -32,6 +32,9 @@ export default function Catalog() {
   const [selectedSort, setSelectedSort] = useState("asc"); // Default selected sort
   const [selectedBrand, setSelectedBrand] = useState("All"); // Default selected brand
   const [selectedType, setSelectedType] = useState("All"); // Default selected type
+  const [selectedBrandId, setSelectedBrandId] = useState(0); // Default selected brand ID
+  const [selectedTypeId, setSelectedTypeId] = useState(0); // Default selected type ID
+
   const [totalItems, setTotalItems] = useState(0); // Total number of items
   const [currentPage, setCurrentPage] = useState(1); // Current page number
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,26 +60,33 @@ export default function Catalog() {
   const loadProducts = () => {
     setLoading(true);
   
-    if (searchTerm) {
-      agent.Store.search(searchTerm)
-        .then((response) => {
-          const productsRes = response.content;
-          setProducts(productsRes); // Assuming `productsRes` is an array of products
-          setTotalItems(response.totalElements);
+    // Check if either selectedBrandId or selectedTypeId is not 0
+    if (selectedBrandId !== 0 || selectedTypeId !== 0) {
+      // If either brand or type is selected, make a filtered request
+      agent.Store.list(currentPage, pageSize, selectedBrandId !== 0 ? selectedBrandId : undefined, selectedTypeId !== 0 ? selectedTypeId : undefined)
+        .then((productsRes) => {
+          setProducts(productsRes.content);
+          setTotalItems(productsRes.totalElements);
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     } else {
+      // Otherwise, make a regular list request
       agent.Store.list(currentPage, pageSize)
-        .then((response) => {
-          const productsRes = response.content;
-          setProducts(productsRes);
-          setTotalItems(response.totalElements);
+        .then((productsRes) => {
+          setProducts(productsRes.content);
+          setTotalItems(productsRes.totalElements);
         })
         .catch((error) => console.log(error))
         .finally(() => setLoading(false));
     }
   };
+  
+  // Trigger loadProducts whenever selectedBrandId or selectedTypeId changes
+  useEffect(() => {
+    loadProducts();
+  }, [selectedBrandId, selectedTypeId]);
+  
   
 
   const handleSortChange = (event) => {
@@ -84,12 +94,23 @@ export default function Catalog() {
   };
 
   const handleBrandChange = (event) => {
-    setSelectedBrand(event.target.value);
+    const selectedBrand = event.target.value;
+    const brand = brands.find((b) => b.name === selectedBrand);
+    setSelectedBrand(selectedBrand);
+    setSelectedBrandId(brand.id); // Set selected brand ID
+    //setSearchTerm(selectedBrand); // Update searchTerm to trigger search
+    loadProducts(); // Call loadProducts to perform the search
   };
-
+  
   const handleTypeChange = (event) => {
-    setSelectedType(event.target.value);
+    const selectedType = event.target.value;
+    const type = types.find((t) => t.name === selectedType);
+    setSelectedType(selectedType);
+    setSelectedTypeId(type.id); // Set selected type ID
+    //setSearchTerm(selectedType); // Update searchTerm to trigger search
+    loadProducts(); // Call loadProducts to perform the search
   };
+  
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
