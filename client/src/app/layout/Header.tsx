@@ -4,7 +4,6 @@ import { AppBar, Badge, Box, IconButton, List, ListItem, Switch, Toolbar, Typogr
 import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
 import { useAppSelector } from "../store/configureStore";
-import { useAppDispatch } from "../../app/store/configureStore";
 import { useEffect } from "react";
 
 const navLinks = [
@@ -46,10 +45,9 @@ export default function Header({ darkMode, handleThemeChange }: Props) {
   console.log(temp?.items);
   console.log('Basket Items:', basket?.items);
   const itemCount = basket?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-  const dispatch = useAppDispatch();
-
+  
   return (
-    <AppBar position="static" sx={{ mb: 4 }}>
+    <AppBar position="sticky" sx={{ mb: 4, top: 0, zIndex: 9999 }}>
       <Toolbar
         sx={{
           display: "flex",

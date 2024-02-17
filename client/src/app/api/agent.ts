@@ -5,7 +5,6 @@ import { Product } from "../models/product";
 import BasketService from "./basketService";
 import { Basket as BasketModel } from "../models/basket";
 import { Dispatch } from "redux";
-import { setBasket } from "../../features/basket/basketSlice";
 
 axios.defaults.baseURL = 'http://localhost:8080/api/';
 
@@ -17,8 +16,10 @@ const requests = {
 };
 
 const Store = {
-  list: () => requests.get('products'),
-  details: (id: number) => requests.get(`products/${id}`)
+  list: (page: number, size: number) => requests.get(`products?page=${page-1}&size=${size}`),
+  details: (id: number) => requests.get(`products/${id}`),
+  types: () => requests.get('products/types').then(types => [{ id: 0, name: 'All' }, ...types]),
+  brands: () => requests.get('products/brands').then(brands => [{ id: 0, name: 'All' }, ...brands])
 };
 
 const Basket = {
