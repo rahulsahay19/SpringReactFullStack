@@ -61,9 +61,27 @@ export default function Catalog() {
     setLoading(true);
   
     // Check if either selectedBrandId or selectedTypeId is not 0
-    if (selectedBrandId !== 0 || selectedTypeId !== 0) {
-      // If either brand or type is selected, make a filtered request
-      agent.Store.list(currentPage, pageSize, selectedBrandId !== 0 ? selectedBrandId : undefined, selectedTypeId !== 0 ? selectedTypeId : undefined)
+    if (selectedBrandId !== 0 && selectedTypeId !== 0) {
+      // If both brand and type are selected, make a filtered request by both
+      agent.Store.list(currentPage, pageSize, selectedBrandId, selectedTypeId)
+        .then((productsRes) => {
+          setProducts(productsRes.content);
+          setTotalItems(productsRes.totalElements);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    } else if (selectedBrandId !== 0 && selectedTypeId === 0) {
+      // If only brand is selected and type is not selected, make a filtered request by brand
+      agent.Store.list(currentPage, pageSize, selectedBrandId)
+        .then((productsRes) => {
+          setProducts(productsRes.content);
+          setTotalItems(productsRes.totalElements);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    } else if (selectedTypeId !== 0 && selectedBrandId === 0) {
+      // If only type is selected and brand is not selected, make a filtered request by type
+      agent.Store.list(currentPage, pageSize, undefined, selectedTypeId)
         .then((productsRes) => {
           setProducts(productsRes.content);
           setTotalItems(productsRes.totalElements);
@@ -81,6 +99,7 @@ export default function Catalog() {
         .finally(() => setLoading(false));
     }
   };
+  
   
   // Trigger loadProducts whenever selectedBrandId or selectedTypeId changes
   useEffect(() => {
