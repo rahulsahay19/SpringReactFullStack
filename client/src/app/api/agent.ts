@@ -19,7 +19,8 @@ const Store = {
   list: (page: number, size: number) => requests.get(`products?page=${page-1}&size=${size}`),
   details: (id: number) => requests.get(`products/${id}`),
   types: () => requests.get('products/types').then(types => [{ id: 0, name: 'All' }, ...types]),
-  brands: () => requests.get('products/brands').then(brands => [{ id: 0, name: 'All' }, ...brands])
+  brands: () => requests.get('products/brands').then(brands => [{ id: 0, name: 'All' }, ...brands]),
+  search: (keyword: string) => requests.get(`products?keyword=${keyword}`),
 };
 
 const Basket = {

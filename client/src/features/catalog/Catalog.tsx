@@ -34,22 +34,50 @@ export default function Catalog() {
   const [selectedType, setSelectedType] = useState("All"); // Default selected type
   const [totalItems, setTotalItems] = useState(0); // Total number of items
   const [currentPage, setCurrentPage] = useState(1); // Current page number
+  const [searchTerm, setSearchTerm] = useState('');
   const pageSize = 10; // Number of items per page
 
   useEffect(() => {
-    loadProducts();
-  }, [currentPage, selectedSort, selectedBrand, selectedType]);
-
-  const loadProducts = () => {
-    setLoading(true);
-    agent.Store.list(currentPage, pageSize)
-      .then((productsRes) => {
+    Promise.all([
+      agent.Store.list(currentPage, pageSize),
+      agent.Store.brands(),
+      agent.Store.types()
+    ])
+      .then(([productsRes, brandsRes, typesRes]) => {
         setProducts(productsRes.content);
         setTotalItems(productsRes.totalElements);
+        setBrands(brandsRes);
+        setTypes(typesRes);
       })
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
+  }, [currentPage, pageSize]);
+  
+
+  const loadProducts = () => {
+    setLoading(true);
+  
+    if (searchTerm) {
+      agent.Store.search(searchTerm)
+        .then((response) => {
+          const productsRes = response.content;
+          setProducts(productsRes); // Assuming `productsRes` is an array of products
+          setTotalItems(response.totalElements);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    } else {
+      agent.Store.list(currentPage, pageSize)
+        .then((response) => {
+          const productsRes = response.content;
+          setProducts(productsRes);
+          setTotalItems(response.totalElements);
+        })
+        .catch((error) => console.log(error))
+        .finally(() => setLoading(false));
+    }
   };
+  
 
   const handleSortChange = (event) => {
     setSelectedSort(event.target.value);
@@ -82,9 +110,22 @@ export default function Catalog() {
         </Box>
       </Grid>
       <Grid item xs={3}>
-        <Paper sx={{ mb: 2 }}>
-          <TextField label="Search products" variant="outlined" fullWidth />
-        </Paper>
+      <Paper sx={{ mb: 2 }}>
+        <TextField 
+          label="Search products" 
+          variant="outlined" 
+          fullWidth 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              // Trigger search action
+              loadProducts();
+            }
+          }}
+        />
+    </Paper>
+
         <Paper sx={{ mb: 2, p: 2 }}>
           <FormControl>
             <FormLabel id="sort-by-name-label">Sort by Name</FormLabel>
