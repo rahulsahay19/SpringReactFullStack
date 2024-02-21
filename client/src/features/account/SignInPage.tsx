@@ -1,28 +1,41 @@
-import { useState } from 'react';
-import { Avatar, Button, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@mui/material';
+import { Avatar, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid, Box, Typography, Container } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import agent from '../../app/api/agent';
-import { toast } from 'react-toastify';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
+import { useNavigate } from 'react-router-dom';
+import { store, useAppDispatch } from '../../app/store/configureStore';
+import { signInUser } from './accountSlice';
+import { toast } from 'react-toastify';
 
 
 const SignInPage = () => {
-  const {register, handleSubmit, formState:{isSubmitting, errors, isValid}} = useForm({
-    mode:'onTouched'
-  })
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const {register, handleSubmit, formState:{isSubmitting, errors, isValid}} = useForm({
+        mode:'onTouched'
+    })
 
-  async function submitForm(data: FieldValues){
-    try {
-        const response = await agent.Account.login(data);
-        toast.success('Sign in successful');
-        console.log(response);
-        // Redirect to the checkout page        
-      } catch (error) {
-        toast.error('Sign in failed. Please try again.');
-        console.error(error);
-      }
-  }
+    async function submitForm(data: FieldValues){
+        try {
+            // Dispatch the sign-in action
+            await dispatch(signInUser(data));
+            // Check if the user is logged in
+            const { user } = store.getState().account;
+            if (user) {
+                // If user is logged in, navigate to the store page
+                navigate('/store');
+            } else {
+                // If user is not logged in, show an error message or handle it in another way
+                toast.error('Sign in failed. Please try again.');
+            }
+        } catch (error) {
+            // Handle any errors if needed
+            console.error('Error signing in:', error);
+            // Show an error message or handle it in another way
+            toast.error('Sign in failed. Please try again.');
+        }
+    }
+    
 
   return (
       <Container component="main" maxWidth="xs">
