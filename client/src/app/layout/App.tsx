@@ -9,16 +9,17 @@ import agent from "../api/agent";
 import Spinner from "./Spinner";
 import { useAppDispatch } from "../store/configureStore";
 import { setBasket } from "../../features/basket/basketSlice";
+import { fetchCurrentUser } from "../../features/account/accountSlice";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const paletteType = darkMode ? 'dark' : 'light';
-  //const {setBasket} = useStoreContext();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     const basket = getBasketFromLocalStorage();
+    dispatch(fetchCurrentUser());
     if(basket){
       agent.Basket.get()
       .then(basket=>dispatch(setBasket(basket)))

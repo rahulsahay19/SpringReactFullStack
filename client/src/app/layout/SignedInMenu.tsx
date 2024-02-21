@@ -26,7 +26,7 @@ export default function SignedInMenu() {
             color='inherit'
             sx={{typography:'h6'}}
             >
-            {user?.username}
+            Hi, {user?.username}
           </Button>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose} TransitionComponent={Fade}> 
             <MenuItem onClick={handleClose}>Profile</MenuItem>
