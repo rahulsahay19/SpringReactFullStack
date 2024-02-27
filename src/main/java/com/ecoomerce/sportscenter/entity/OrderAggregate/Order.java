@@ -34,7 +34,7 @@ public class Order {
     private List<OrderItem> orderItems;
 
     @Column(name="Sub_Total")
-    private Long subTotal;
+    private Double subTotal;
 
     @Column(name="Delivery_Fee")
     private Long deliveryFee;
@@ -43,7 +43,7 @@ public class Order {
     @Column(name="Order_Status")
     private OrderStatus orderStatus = OrderStatus.Pending;
 
-    public Long getTotal() {
+    public Double getTotal() {
         return getSubTotal() + getDeliveryFee();
     }
 }

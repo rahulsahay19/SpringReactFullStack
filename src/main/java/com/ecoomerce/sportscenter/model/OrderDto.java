@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponse {
+public class OrderDto {
     private Integer id;
     private String basketId;
     private ShippingAddress shippingAddress;

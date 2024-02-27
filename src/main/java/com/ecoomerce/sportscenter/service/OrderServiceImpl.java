@@ -9,7 +9,7 @@ import com.ecoomerce.sportscenter.entity.Type;
 import com.ecoomerce.sportscenter.mapper.OrderMapper;
 import com.ecoomerce.sportscenter.model.BasketItemResponse;
 import com.ecoomerce.sportscenter.model.BasketResponse;
-import com.ecoomerce.sportscenter.model.OrderResponse;
+import com.ecoomerce.sportscenter.model.OrderDto;
 import com.ecoomerce.sportscenter.repository.BrandRepository;
 import com.ecoomerce.sportscenter.repository.OrderRepository;
 import com.ecoomerce.sportscenter.repository.TypeRepository;
@@ -41,57 +41,69 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getOrderById(Integer orderId) {
+    public OrderDto getOrderById(Integer orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         return optionalOrder.map(orderMapper::orderToOrderResponse).orElse(null);
     }
 
     @Override
-    public List<OrderResponse> getAllOrders() {
+    public List<OrderDto> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream().map(orderMapper::orderToOrderResponse).collect(Collectors.toList());
     }
 
     @Override
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+    public Page<OrderDto> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable).map(orderMapper::orderToOrderResponse);
     }
 
     @Override
-    public OrderResponse createOrder(OrderResponse orderResponse) {
+    public OrderDto createOrder(OrderDto orderDto) {
         // Fetch basket details
-        BasketResponse basketResponse = basketService.getBasketById(orderResponse.getBasketId());
+        BasketResponse basketResponse = basketService.getBasketById(orderDto.getBasketId());
         if (basketResponse == null) {
             // Basket not found
-            log.error("Basket with ID {} not found.", orderResponse.getBasketId());
+            log.error("Basket with ID {} not found.", orderDto.getBasketId());
             return null;
         }
 
         // Map basket items to order items
-        List<OrderItem> orderItems = basketResponse.getItems().stream()
+            List<OrderItem> orderItems = basketResponse.getItems().stream()
                 .map(this::mapBasketItemToOrderItem)
                 .collect(Collectors.toList());
 
+        // Calculate subtotal
+        double subTotal = basketResponse.getItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+
         // Set order details
-        Order order = orderMapper.orderResponseToOrder(orderResponse);
+        Order order = orderMapper.orderResponseToOrder(orderDto);
         order.setOrderItems(orderItems);
+        order.setSubTotal(subTotal);
 
         // Save the order
-        return orderMapper.orderToOrderResponse(orderRepository.save(order));
+        Order savedOrder = orderRepository.save(order);
+
+        // Delete the basket
+        basketService.deleteBasketById(orderDto.getBasketId());
+
+        // Return the response
+        return orderMapper.orderToOrderResponse(savedOrder);
     }
 
     @Override
-    public OrderResponse updateOrder(OrderResponse orderResponse) {
+    public OrderDto updateOrder(OrderDto orderDto) {
         // Check if the order exists
-        Optional<Order> optionalExistingOrder = orderRepository.findById(orderResponse.getId());
+        Optional<Order> optionalExistingOrder = orderRepository.findById(orderDto.getId());
         if (optionalExistingOrder.isPresent()) {
             // Update the existing order
             Order existingOrder = optionalExistingOrder.get();
             // You might need to perform additional mappings here if necessary
-            orderMapper.updateOrderFromOrderResponse(orderResponse, existingOrder);
+            orderMapper.updateOrderFromOrderResponse(orderDto, existingOrder);
             return orderMapper.orderToOrderResponse(orderRepository.save(existingOrder));
         } else {
-            log.error("Order with ID {} not found, cannot update.", orderResponse.getId());
+            log.error("Order with ID {} not found, cannot update.", orderDto.getId());
             return null;
         }
     }
