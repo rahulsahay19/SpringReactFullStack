@@ -2,7 +2,7 @@ import { Avatar, CssBaseline, TextField, FormControlLabel, Checkbox, Link, Grid,
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { FieldValues, useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { store, useAppDispatch } from '../../app/store/configureStore';
 import { signInUser } from './accountSlice';
 import { toast } from 'react-toastify';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 
 const SignInPage = () => {
     const navigate = useNavigate();
+    const location = useLocation(); 
     const dispatch = useAppDispatch();
     const {register, handleSubmit, formState:{isSubmitting, errors, isValid}} = useForm({
         mode:'onTouched'
@@ -23,7 +24,8 @@ const SignInPage = () => {
             const { user } = store.getState().account;
             if (user) {
                 // If user is logged in, navigate to the store page
-                navigate('/store');
+                //navigate('/store');
+                navigate(location.state?.from || '/store');
             } else {
                 // If user is not logged in, show an error message or handle it in another way
                 toast.error('Sign in failed. Please try again.');
