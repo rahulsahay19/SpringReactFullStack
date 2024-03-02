@@ -1,6 +1,7 @@
 import { Typography, Table, TableContainer, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import { useAppSelector } from "../../app/store/configureStore";
 import BasketSummary from '../basket/BasketSummary';
+import { Product } from '../../app/models/product';
 
 export default function Review() {
   const { basket } = useAppSelector(state => state.basket);
