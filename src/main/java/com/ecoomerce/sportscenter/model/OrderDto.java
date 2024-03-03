@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDto {
-    private Integer id;
     private String basketId;
     private ShippingAddress shippingAddress;
     private Long subTotal;

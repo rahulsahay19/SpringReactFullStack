@@ -112,6 +112,14 @@ async decrementItemQuantity(itemId: number, quantity: number = 1, dispatch: Disp
     }
   }
 
+  async deleteBasket(basketId: string): Promise<void> {
+    try {
+      await axios.delete(`${this.apiUrl}/${basketId}`);
+    } catch (error) {
+      throw new Error("Failed to delete basket");
+    }
+  }
+
   private getCurrentBasket() {
     const basketString = localStorage.getItem('basket');
     return basketString ? JSON.parse(basketString) as Basket : null;

@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper
 public interface OrderMapper {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
-    @Mapping(source = "id", target = "id")
     @Mapping(source = "basketId", target = "basketId")
     @Mapping(source = "shippingAddress", target = "shippingAddress")
     @Mapping(source = "subTotal", target = "subTotal")

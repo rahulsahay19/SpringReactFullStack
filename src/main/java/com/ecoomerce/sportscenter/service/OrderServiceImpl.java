@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto createOrder(OrderDto orderDto) {
+    public Integer createOrder(OrderDto orderDto) {
         // Fetch basket details
         BasketResponse basketResponse = basketService.getBasketById(orderDto.getBasketId());
         if (basketResponse == null) {
@@ -89,23 +89,8 @@ public class OrderServiceImpl implements OrderService {
         basketService.deleteBasketById(orderDto.getBasketId());
 
         // Return the response
-        return orderMapper.orderToOrderResponse(savedOrder);
-    }
-
-    @Override
-    public OrderDto updateOrder(OrderDto orderDto) {
-        // Check if the order exists
-        Optional<Order> optionalExistingOrder = orderRepository.findById(orderDto.getId());
-        if (optionalExistingOrder.isPresent()) {
-            // Update the existing order
-            Order existingOrder = optionalExistingOrder.get();
-            // You might need to perform additional mappings here if necessary
-            orderMapper.updateOrderFromOrderResponse(orderDto, existingOrder);
-            return orderMapper.orderToOrderResponse(orderRepository.save(existingOrder));
-        } else {
-            log.error("Order with ID {} not found, cannot update.", orderDto.getId());
-            return null;
-        }
+       // return orderMapper.orderToOrderResponse(savedOrder);
+        return savedOrder.getId();
     }
 
     @Override

@@ -83,6 +83,14 @@ const Basket = {
       console.error("Failed to set basket:", error);
       throw error;
     }
+  },
+  deleteBasket: async(basketId: string) =>{
+    try{
+      await BasketService.deleteBasket(basketId);
+    } catch(error){
+      console.log("Failed to delete the Basket");
+      throw error;
+    }
   }
 };
 
@@ -90,10 +98,17 @@ const Account ={
   login: (values: any) => requests.post('auth/login', values)  
 }
 
+const Orders = {
+  list:() => requests.get('orders'),
+  fetch:(id: number) => requests.get(`orders/${id}`),
+  create:(values: any) => requests.post('orders', values)
+}
+
 const agent = {
   Store,
   Basket,
-  Account    
+  Account,
+  Orders    
 };
 
 export default agent;

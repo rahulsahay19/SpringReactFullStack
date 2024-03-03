@@ -44,23 +44,15 @@ public class OrdersController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDto> createOrder(@Valid @RequestBody OrderDto orderDto) {
-        OrderDto createdOrder = orderService.createOrder(orderDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+    public ResponseEntity<Integer> createOrder(@Valid @RequestBody OrderDto orderDto) {
+        Integer orderId = orderService.createOrder(orderDto);
+        if (orderId != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @PutMapping("/{orderId}")
-    public ResponseEntity<OrderDto> updateOrder(@PathVariable Integer orderId, @Valid @RequestBody OrderDto orderDto) {
-        if (!orderId.equals(orderDto.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
-        OrderDto updatedOrder = orderService.updateOrder(orderDto);
-        if (updatedOrder != null) {
-            return ResponseEntity.ok(updatedOrder);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Integer orderId) {

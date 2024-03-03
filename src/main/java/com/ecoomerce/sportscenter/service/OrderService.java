@@ -10,7 +10,6 @@ public interface OrderService {
     OrderDto getOrderById(Integer orderId);
     List<OrderDto> getAllOrders();
     Page<OrderDto> getAllOrders(Pageable pageable);
-    OrderDto createOrder(OrderDto order);
-    OrderDto updateOrder(OrderDto order);
+    Integer createOrder(OrderDto order);
     void deleteOrder(Integer orderId);
 }

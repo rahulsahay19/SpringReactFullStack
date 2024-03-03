@@ -2,8 +2,6 @@ import {
   Typography,
   Grid,
   TextField,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
@@ -116,12 +114,6 @@ export default function AddressForm() {
               autoComplete="shipping country"
               variant="standard"
               error={!!errors.country}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={<Checkbox color="secondary" {...register("saveAddress")} />}
-              label="Use this address for payment details"
             />
           </Grid>          
         </Grid>
