@@ -10,6 +10,7 @@ import com.ecoomerce.sportscenter.mapper.OrderMapper;
 import com.ecoomerce.sportscenter.model.BasketItemResponse;
 import com.ecoomerce.sportscenter.model.BasketResponse;
 import com.ecoomerce.sportscenter.model.OrderDto;
+import com.ecoomerce.sportscenter.model.OrderResponse;
 import com.ecoomerce.sportscenter.repository.BrandRepository;
 import com.ecoomerce.sportscenter.repository.OrderRepository;
 import com.ecoomerce.sportscenter.repository.TypeRepository;
@@ -41,19 +42,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto getOrderById(Integer orderId) {
+    public OrderResponse getOrderById(Integer orderId) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
         return optionalOrder.map(orderMapper::orderToOrderResponse).orElse(null);
     }
 
     @Override
-    public List<OrderDto> getAllOrders() {
+    public List<OrderResponse> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream().map(orderMapper::orderToOrderResponse).collect(Collectors.toList());
     }
 
     @Override
-    public Page<OrderDto> getAllOrders(Pageable pageable) {
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable).map(orderMapper::orderToOrderResponse);
     }
 

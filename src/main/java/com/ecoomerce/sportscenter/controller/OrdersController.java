@@ -1,6 +1,7 @@
 package com.ecoomerce.sportscenter.controller;
 
 import com.ecoomerce.sportscenter.model.OrderDto;
+import com.ecoomerce.sportscenter.model.OrderResponse;
 import com.ecoomerce.sportscenter.service.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,8 @@ public class OrdersController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDto> getOrderById(@PathVariable Integer orderId) {
-        OrderDto order = orderService.getOrderById(orderId);
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer orderId) {
+        OrderResponse order = orderService.getOrderById(orderId);
         if (order != null) {
             return ResponseEntity.ok(order);
         } else {
@@ -32,14 +33,14 @@ public class OrdersController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDto>> getAllOrders() {
-        List<OrderDto> orders = orderService.getAllOrders();
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        List<OrderResponse> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/paged")
-    public ResponseEntity<Page<OrderDto>> getAllOrdersPaged(Pageable pageable) {
-        Page<OrderDto> orders = orderService.getAllOrders(pageable);
+    public ResponseEntity<Page<OrderResponse>> getAllOrdersPaged(Pageable pageable) {
+        Page<OrderResponse> orders = orderService.getAllOrders(pageable);
         return ResponseEntity.ok(orders);
     }
 

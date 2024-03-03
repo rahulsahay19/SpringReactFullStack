@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { Fade } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../store/configureStore';
 import { logOut } from '../../features/account/accountSlice';
+import { Link } from 'react-router-dom';
 
 export default function SignedInMenu() {
     const dispatch = useAppDispatch();
@@ -30,7 +31,7 @@ export default function SignedInMenu() {
           </Button>
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose} TransitionComponent={Fade}> 
             <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My Orders</MenuItem>
+            <MenuItem component={Link} to="/orders">My Orders</MenuItem>
             <MenuItem onClick={()=>dispatch(logOut())}>Logout</MenuItem>
           </Menu>
     </>
