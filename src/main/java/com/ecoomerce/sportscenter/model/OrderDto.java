@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class OrderDto {
     private ShippingAddress shippingAddress;
     private Long subTotal;
     private Long deliveryFee;
+    private LocalDateTime orderDate = LocalDateTime.now();
 }

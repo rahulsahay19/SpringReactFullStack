@@ -24,7 +24,7 @@ public interface OrderMapper {
     @Mapping(target = "orderStatus", constant = "Pending")
     OrderResponse orderToOrderResponse(Order order);
 
-    //@Mapping(target = "orderDate", expression = "java(orderDto.getOrderDate())")
+    @Mapping(target = "orderDate", expression = "java(orderDto.getOrderDate())")
     @Mapping(target = "orderStatus", constant = "Pending") // Reference enum constant directly
     Order orderResponseToOrder(OrderDto orderDto);
 
