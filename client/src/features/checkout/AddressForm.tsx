@@ -21,9 +21,10 @@ export default function AddressForm() {
             <TextField
               required
               id="firstName"
-              {...register("firstName", { shouldUnregister: false })}
+              {...register("firstName")}
               label="First name"
               fullWidth
+              helperText="Enter First Name"
               autoComplete="given-name"
               variant="standard"
               error={!!errors.firstName} 
@@ -35,6 +36,7 @@ export default function AddressForm() {
               id="lastName"
               {...register("lastName")}
               label="Last name"
+              helperText="Enter Last Name"
               fullWidth
               autoComplete="family-name"
               variant="standard"
@@ -47,6 +49,7 @@ export default function AddressForm() {
               id="address1"
               {...register("address1")}
               label="Address line 1"
+              helperText="Enter Address Line 1"
               fullWidth
               autoComplete="shipping address-line1"
               variant="standard"
@@ -58,6 +61,7 @@ export default function AddressForm() {
               id="address2"
               {...register("address2")}
               label="Address line 2"
+              helperText="Enter Address Line 2"
               fullWidth
               autoComplete="shipping address-line2"
               variant="standard"
@@ -70,6 +74,7 @@ export default function AddressForm() {
               id="city"
               {...register("city")}
               label="City"
+              helperText="Enter City"
               fullWidth
               autoComplete="shipping address-level2"
               variant="standard"
@@ -81,6 +86,7 @@ export default function AddressForm() {
               id="state"
               {...register("state")}
               label="State/Province/Region"
+              helperText="Enter State"
               fullWidth
               variant="standard"
               error={!!errors.state}
@@ -92,6 +98,7 @@ export default function AddressForm() {
               id="zip"
               {...register("zip")}
               label="Zip / Postal code"
+              helperText="Enter Zip"
               fullWidth
               autoComplete="shipping postal-code"
               variant="standard"
@@ -104,6 +111,7 @@ export default function AddressForm() {
               id="country"
               {...register("country")}
               label="Country"
+              helperText="Enter Country"
               fullWidth
               autoComplete="shipping country"
               variant="standard"

@@ -32,9 +32,10 @@ import { validationRules } from "./checkoutValidation";
   
   export default function CheckoutPage() {
     const [activeStep, setActiveStep] = useState(0);
+    const currentValdationRule = validationRules[activeStep];
     const methods = useForm({
       mode: 'all',
-      resolver: yupResolver(validationRules)      
+      resolver: yupResolver(currentValdationRule)      
     }); // Initialize useForm
   
     const handleNext = async () => {
