@@ -17,5 +17,5 @@ public class OrderDto {
     private ShippingAddress shippingAddress;
     private Long subTotal;
     private Long deliveryFee;
-    private LocalDateTime orderDate = LocalDateTime.now();
+    private LocalDateTime orderDate;
 }
