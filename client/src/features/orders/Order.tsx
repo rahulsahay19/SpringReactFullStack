@@ -18,14 +18,22 @@ export default function Order(){
     if (loading) return <Spinner message="Loading orders..."/>
     
     // Function to convert order date to formatted string
-    const formatOrderDate = (date: Date) => {
-        return date.toLocaleDateString();
-    };
+    function formatDate(orderDateArray) {
+        if (!Array.isArray(orderDateArray) || orderDateArray.length < 3) {
+            return "Invalid Date";
+        }
+    
+        const [year, month, day] = orderDateArray;
+        const formattedDate = `${String(day).padStart(2, '0')}-${String(month).padStart(2, '0')}-${year}`;
+        return formattedDate;
+    }  
+    
+    
     
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
+                <TableHead>``
                     <TableRow>
                         <TableCell>#</TableCell>
                         <TableCell align="right">Total</TableCell>
@@ -43,7 +51,7 @@ export default function Order(){
                                 {order.id}
                             </TableCell>
                             <TableCell align="right">{order.total}</TableCell>
-                            <TableCell align="right">{order.orderDate.toString()}</TableCell>
+                            <TableCell align="right">{formatDate(order.orderDate)}</TableCell>
                             <TableCell align="right">{order.orderStatus}</TableCell>                
                         </TableRow>
                     ))}
